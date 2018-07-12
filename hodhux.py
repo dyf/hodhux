@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class HodHux:
     def __init__(self, C = 1,
                  GKMax = 36, GNaMax = 120, Gm = 0.3,
@@ -28,16 +29,6 @@ class HodHux:
         self.INa = 0
         self.IK = 0
         self.Im = 0
-
-    def filter_I(self, I, Itau, dt):
-        Iout = np.zeros_like(I)
-        
-        Icurr = I[0]
-        for idx, i in enumerate(I):
-            Icurr += dt/Itau * (i - Icurr)
-            Iout[idx] = Icurr
-
-        return Iout
          
     def alphaN(self, V):
         if V==10: return self.alphaN(V+0.001) # 0/0 -> NaN
@@ -58,25 +49,15 @@ class HodHux:
                     
     def betaH(self, V):
         return 1 / (np.exp((30-V)/10)+1)
-
-    def simulate_step(self, t_start, t_stop, t_end, DC, dt, V0, Itau=None):
-        t = np.arange(0.0, t_end, dt)
-        I = np.zeros(t.shape)
-        I[(t>=t_start)&(t<t_stop)] = DC
-
-        return self.simulate(I, dt, V0, Itau)
         
-    def simulate(self, I, dt, V0, Itau=None):
+    def simulate(self, I, dt, V0):
         self.reset(dt, V0)
-
-        if Itau is not None:
-            I = self.filter_I(I, Itau, dt)
 
         V = np.zeros_like(I)
         for i in range(len(I)):
             V[i] = self.step(I[i])
 
-        return V, I
+        return V
         
     def step(self, Iinj):
         aN = self.alphaN(self.V)

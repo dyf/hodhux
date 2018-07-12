@@ -3,6 +3,8 @@ matplotlib.use('agg')
 
 import matplotlib.pyplot as plt
 from hodhux import HodHux
+import stimulus as stim
+
 import numpy as np
 
 def sim():
@@ -16,12 +18,16 @@ def sim():
  
     hh = HodHux()
 
+    I = stim.step(t_i_start, t_i_stop, t_end, DC, dt)
 
-    V, Iinj = hh.simulate_step(t_i_start, t_i_stop, t_end, DC, dt, V0, Itau)
+    if Itau:
+        I = stim.filter_I_tau(I, Itau, dt)
+
+    V = hh.simulate(I, dt, V0)
     t = np.arange(0.0, t_end, dt)
 
     fig, (ax1,ax2) = plt.subplots(2, 1, figsize=(5,6))
-    ax1.plot(t, Iinj)
+    ax1.plot(t, I)
     ax1.set_ylabel('stimulus (nA/cm^2)')
     
     ax2.plot(t, V)
