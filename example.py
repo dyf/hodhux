@@ -18,7 +18,8 @@ def sim():
  
     hh = HodHux()
 
-    I = stim.step(t_i_start, t_i_stop, t_end, DC, dt)
+    #I = stim.step(t_i_start, t_i_stop, t_end, DC, dt)
+    I = stim.ramp(t_i_start, t_i_stop, t_end, DC, dt)
 
     if Itau:
         I = stim.filter_I_tau(I, Itau, dt)
@@ -34,7 +35,7 @@ def sim():
     ax2.set_xlabel('time (ms)')
     ax2.set_ylabel('response (mV)')
 
-    plt.suptitle('Hodgkin-Huxley Step Response')
+    plt.suptitle('Hodgkin-Huxley Ramp Response')
     plt.show()
     plt.savefig('example.png')
 
