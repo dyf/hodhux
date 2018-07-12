@@ -2,9 +2,10 @@ import numpy as np
 
 class HodHux:
     def __init__(self, C, GKMax, GNaMax,
-                 EK, ENa, Gm, VRest, V0):
+                 EK, ENa, Gm, VRest, V0,
+                 dt = 0.025, n = 0.32, m = 0.05, h = 0.6):
 
-        self.C = C #in muF/cm^2
+        self.C = C # in muF/cm^2
         self.GKMax = GKMax
         self.GNaMax = GNaMax
         self.EK = EK # mV
@@ -13,10 +14,11 @@ class HodHux:
         self.VRest = VRest
         self.V = V0
 
-        self.dt = 0.025 # ms
-        self.n = 0.32
-        self.m = 0.05
-        self.h = 0.60
+        self.dt = dt # ms
+        self.n = n
+        self.m = m
+        self.h = h
+        
         self.INa = 0
         self.IK = 0
         self.Im = 0
