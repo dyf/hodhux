@@ -11,22 +11,14 @@ def sim():
     t_i_stop = 200
     t_end = 250
     Itau = 1
+    dt = 0.025
+    V0 = 0
  
-    hh = HodHux(C=1,
-                GKMax=36, GNaMax=120, Gm=0.3,
-                EK=-12, ENa=115,
-                VRest=10.613, V0=0)
+    hh = HodHux()
 
-    t = np.arange(0.0, t_end, hh.dt)
-    V = np.zeros(t.shape)
-    Iraw = np.zeros(t.shape)
-    Iraw[(t>=t_i_start)&(t<t_i_stop)] = DC
-    Iinj = hh.filter_I(Iraw, Itau)
 
-    for i,tt in enumerate(t):
-        iraw = Iraw[i]
-
-        V[i] = hh.step(Iinj[i])
+    V, Iinj = hh.simulate_step(t_i_start, t_i_stop, t_end, DC, dt, V0, Itau)
+    t = np.arange(0.0, t_end, dt)
 
     fig, (ax1,ax2) = plt.subplots(2, 1, figsize=(5,6))
     ax1.plot(t, Iinj)

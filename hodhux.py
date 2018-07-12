@@ -1,9 +1,11 @@
 import numpy as np
 
 class HodHux:
-    def __init__(self, C, GKMax, GNaMax,
-                 EK, ENa, Gm, VRest, V0,
-                 dt = 0.025, n = 0.32, m = 0.05, h = 0.6):
+    def __init__(self, C = 1,
+                 GKMax = 36, GNaMax = 120, Gm = 0.3,
+                 EK = -12, ENa = 115,
+                 VRest = 10.613, 
+                 n = 0.32, m = 0.05, h = 0.6):
 
         self.C = C # in muF/cm^2
         self.GKMax = GKMax
@@ -12,23 +14,27 @@ class HodHux:
         self.ENa = ENa
         self.Gm = Gm
         self.VRest = VRest
-        self.V = V0
-
-        self.dt = dt # ms
+        
         self.n = n
         self.m = m
         self.h = h
+
+        self.reset(dt=None, V0=None)
+
+    def reset(self, dt, V0):
+        self.dt = dt
+        self.V = V0
         
         self.INa = 0
         self.IK = 0
         self.Im = 0
 
-    def filter_I(self, I, Itau):
+    def filter_I(self, I, Itau, dt):
         Iout = np.zeros_like(I)
         
         Icurr = I[0]
         for idx, i in enumerate(I):
-            Icurr += self.dt/Itau * (i - Icurr)
+            Icurr += dt/Itau * (i - Icurr)
             Iout[idx] = Icurr
 
         return Iout
@@ -53,6 +59,25 @@ class HodHux:
     def betaH(self, V):
         return 1 / (np.exp((30-V)/10)+1)
 
+    def simulate_step(self, t_start, t_stop, t_end, DC, dt, V0, Itau=None):
+        t = np.arange(0.0, t_end, dt)
+        I = np.zeros(t.shape)
+        I[(t>=t_start)&(t<t_stop)] = DC
+
+        return self.simulate(I, dt, V0, Itau)
+        
+    def simulate(self, I, dt, V0, Itau=None):
+        self.reset(dt, V0)
+
+        if Itau is not None:
+            I = self.filter_I(I, Itau, dt)
+
+        V = np.zeros_like(I)
+        for i in range(len(I)):
+            V[i] = self.step(I[i])
+
+        return V, I
+        
     def step(self, Iinj):
         aN = self.alphaN(self.V)
         bN = self.betaN(self.V)
