@@ -1,12 +1,43 @@
 import numpy as np
 
+class HHDefaults:
+    C = 1
+    GKMax = 36
+    GNaMax = 120
+    Gm = 0.3
+    EK = -12
+    ENa = 115
+    VRest = 10.613
+    n = 0.32
+    m = 0.05
+    h = 0.6
 
+    @staticmethod
+    def random(s):
+        return dict(C = HHDefaults.C * np.random.normal(1,s),
+                    GKMax = HHDefaults.GKMax * np.random.normal(1,s),
+                    GNaMax = HHDefaults.GNaMax * np.random.normal(1,s),
+                    Gm = HHDefaults.Gm * np.random.normal(1,s),
+                    EK = HHDefaults.EK * np.random.normal(1,s),
+                    ENa = HHDefaults.ENa * np.random.normal(1,s),
+                    VRest = HHDefaults.VRest * np.random.normal(1,s),
+                    n = HHDefaults.n * np.random.normal(1,s),
+                    m = HHDefaults.m * np.random.normal(1,s),
+                    h = HHDefaults.h * np.random.normal(1,s))
+                    
+                    
+    
 class HodHux:
-    def __init__(self, C = 1,
-                 GKMax = 36, GNaMax = 120, Gm = 0.3,
-                 EK = -12, ENa = 115,
-                 VRest = 10.613, 
-                 n = 0.32, m = 0.05, h = 0.6):
+    def __init__(self, C = HHDefaults.C,
+                 GKMax = HHDefaults.GKMax,
+                 GNaMax = HHDefaults.GNaMax,
+                 Gm = HHDefaults.Gm,
+                 EK = HHDefaults.EK,
+                 ENa = HHDefaults.ENa,
+                 VRest = HHDefaults.VRest,
+                 n = HHDefaults.n,
+                 m = HHDefaults.m,
+                 h = HHDefaults.h):
 
         self.C = C # in muF/cm^2
         self.GKMax = GKMax
